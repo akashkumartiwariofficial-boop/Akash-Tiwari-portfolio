@@ -182,30 +182,7 @@ export const SKILLS_LIST: SkillItem[] = [
   },
 ];
 
-export const CERTIFICATIONS: CertificationItem[] = [
-  {
-    id: 'cert-cyber-assessment',
-    title: 'Cybersecurity Assessment & Vulnerability Analysis',
-    issuer: 'Recognized Cybersecurity Authority',
-    issuedDate: '2026',
-    credentialId: 'IITP-CS-SEC-2026-V889',
-    description:
-      'Rigorous evaluation validating proficiency in identifying architectural vulnerabilities, conducting automated & manual penetration testing, evaluating risk exposure, and implementing remediation controls.',
-    skillsCovered: ['Vulnerability Assessment', 'Threat Modeling', 'Nmap Auditing', 'OWASP Standards', 'Remediation Roadmaps'],
-    badgeColor: 'cyan',
-  },
-  {
-    id: 'cert-ethical-hacking',
-    title: 'Advanced Ethical Hacking & Defensive Systems',
-    issuer: 'IIT Cybersecurity Initiative',
-    issuedDate: '2025',
-    credentialId: 'IITG-CS-EH-9402',
-    description:
-      'Practical assessment covering Linux privilege escalation, network perimeter scanning, secure proxy configuration, and defense-in-depth architecture.',
-    skillsCovered: ['Kali Linux Tools', 'Privilege Escalation', 'Burp Suite Probing', 'Network Hardening'],
-    badgeColor: 'emerald',
-  },
-];
+export const CERTIFICATIONS: CertificationItem[] = [];
 
 export const CTF_PLATFORMS: CTFPlatform[] = [
   {
@@ -231,104 +208,7 @@ export const CTF_PLATFORMS: CTFPlatform[] = [
   },
 ];
 
-export const PROJECTS: ProjectItem[] = [
-  {
-    id: 'proj-ai-anomaly',
-    title: 'AI-Powered Network Anomaly & Intrusion Detection',
-    repoName: 'ai-network-anomaly-detection',
-    category: 'AI & Security',
-    summary:
-      'A machine-learning threat detection framework that streams network packet headers, identifies suspicious flow deviations, and flags zero-day intrusion patterns.',
-    description:
-      'Engineered an intelligent security pipeline combining Python (Scapy, Scikit-Learn) and raw packet analysis. The system parses pcap streams in near real-time, extracts 24 statistical flow features, and calculates anomaly scores with minimal false positives. Successfully identified port scans, SYN flood bursts, and unauthorized tunnel egress.',
-    technologies: ['Python', 'Scapy', 'Machine Learning', 'Linux Sockets', 'Network Forensics'],
-    metrics: '98.4% detection rate on benchmark attack traces',
-    highlights: [
-      'Real-time packet capture and flow aggregation engine',
-      'Unsupervised clustering for baseline benign vs malicious traffic',
-      'Automated alert generation with MITRE ATT&CK technique mapping',
-    ],
-    githubUrl: 'https://github.com/akashkumartiwariofficial-boop/ai-network-anomaly-detection',
-    architectureDetails: 'Ingest Layer (Scapy Sniffer) -> Feature Engine (Packet inter-arrival variance, entropy) -> Isolation Forest Evaluator -> Syslog Alert Dispatcher',
-    date: '2026',
-    stars: 84,
-    forks: 21,
-    license: 'MIT',
-    defaultBranch: 'main',
-  },
-  {
-    id: 'proj-recon-scanner',
-    title: 'Automated Reconnaissance & Attack Surface Auditor',
-    repoName: 'attack-surface-auditor',
-    category: 'Tools & Automation',
-    summary:
-      'Modular OSINT and port enumeration automation suite that maps corporate attack surfaces and generates formatted security audit reports.',
-    description:
-      'Developed an automated reconnaissance orchestrator in Python and Bash for offensive-defense exercises. Consolidates DNS records, discovers forgotten subdomains using certificate transparency search, scans listening services through custom Nmap routines, and cross-references vulnerabilities against CVE databases.',
-    technologies: ['Python', 'Nmap', 'Bash Scripting', 'OSINT', 'Burp Suite Integration'],
-    metrics: 'Recon workflow time reduced from 2.5 hours to 8 minutes',
-    highlights: [
-      'Subdomain discovery combining passive OSINT and DNS brute-forcing',
-      'Intelligent Nmap port scanning profiles based on target topology',
-      'Markdown and PDF executive summary reports with severity ranking',
-    ],
-    githubUrl: 'https://github.com/akashkumartiwariofficial-boop/attack-surface-auditor',
-    architectureDetails: 'Passive OSINT Collector -> Target DNS Resolver -> Filtered Port Prober (Nmap NSE) -> CVE Vulnerability Matcher -> PDF Exporter',
-    date: '2025',
-    stars: 56,
-    forks: 14,
-    license: 'Apache-2.0',
-    defaultBranch: 'main',
-  },
-  {
-    id: 'proj-incident-response',
-    title: 'Forensics Triage & Incident Response Playbook Engine',
-    repoName: 'forensics-triage-engine',
-    category: 'Cybersecurity',
-    summary:
-      'An incident triage framework designed to rapidly snapshot volatile memory states, extract running process hierarchies, and trace malicious persistence.',
-    description:
-      'Built a forensics companion tool for incident responders handling compromised Linux and workstation environments. Automatically parses scheduled cron jobs, SSH authorized keys, open listening sockets, and process ancestry trees to build an immutable timeline for forensic investigation.',
-    technologies: ['Linux Internals', 'Python', 'Forensics', 'Bash', 'Auditd'],
-    metrics: 'Fast automated capture of 14 key volatile telemetry artifacts',
-    highlights: [
-      'Automated memory & process artifact extraction within seconds',
-      'Cryptographic SHA-256 integrity hashing for chain of custody',
-      'Interactive visual timeline mapping process spawn triggers',
-    ],
-    githubUrl: 'https://github.com/akashkumartiwariofficial-boop/forensics-triage-engine',
-    architectureDetails: 'Telemetry Probe Daemon -> Memory & Process Artifact Grabber -> SHA-256 Verification -> Timeline Correlator',
-    date: '2025',
-    stars: 42,
-    forks: 9,
-    license: 'MIT',
-    defaultBranch: 'main',
-  },
-  {
-    id: 'proj-secure-channel',
-    title: 'Zero-Knowledge Encrypted Messaging & Key Exchange Protocol',
-    repoName: 'zk-encrypted-protocol',
-    category: 'Cybersecurity',
-    summary:
-      'End-to-end encrypted protocol implementation with forward secrecy, authenticating peers through elliptic curve Diffie-Hellman and AES-256-GCM.',
-    description:
-      'Designed and coded a cryptographic communication protocol demonstrating key exchange, perfect forward secrecy, and tamper-evident message frames. Built to test modern cryptographic defenses against replay attacks and man-in-the-middle interception.',
-    technologies: ['Rust', 'Python', 'Cryptography', 'Socket Programming', 'ECDH'],
-    metrics: 'Sub-millisecond encryption and MAC verification',
-    highlights: [
-      'Ephemeral key negotiation preventing historical decryption',
-      'Authenticated encryption with associated data (AEAD) using AES-256-GCM',
-      'Resistance to bit-flipping and packet injection attacks',
-    ],
-    githubUrl: 'https://github.com/akashkumartiwariofficial-boop/zk-encrypted-protocol',
-    architectureDetails: 'Handshake State Machine (ECDH-P256) -> Session Key Derivation (HKDF-SHA256) -> Encrypted Framing (AES-GCM)',
-    date: '2024',
-    stars: 112,
-    forks: 37,
-    license: 'MIT',
-    defaultBranch: 'main',
-  },
-];
+export const PROJECTS: ProjectItem[] = [];
 
 export const BOOK_DETAILS: BookItem = {
   id: 'book-civic-sense',

@@ -327,6 +327,8 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
     date: '2026',
     imageUrl: '',
     videoUrl: '',
+    images: [],
+    videos: [],
     repoName: '',
     stars: 32,
     forks: 8,
@@ -335,6 +337,8 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
   });
   const [techInput, setTechInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
+  const [customImageInput, setCustomImageInput] = useState('');
+  const [customVideoInput, setCustomVideoInput] = useState('');
   const [projectRepoViewMode, setProjectRepoViewMode] = useState<'github' | 'cards'>('github');
   const [isUploadingProjectPhoto, setIsUploadingProjectPhoto] = useState(false);
   const [isUploadingProjectVideo, setIsUploadingProjectVideo] = useState(false);
@@ -536,75 +540,109 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
     showToast(`Book "${title}" deleted successfully!`);
   };
 
-  // Project Photo & Video Upload Handlers
-  const handleProjectPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setIsUploadingProjectPhoto(true);
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        if (event.target?.result) {
-          const base64 = event.target.result as string;
-          try {
-            const res = await fetch('/api/upload-media', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ mediaBase64: base64, mediaType: 'image' }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              setProjectForm((prev) => ({ ...prev, imageUrl: data.url }));
-              showToast('Project photo uploaded successfully!');
-              setIsUploadingProjectPhoto(false);
-              return;
+  // Project Photo & Video Upload Handlers (Supports Multiple Files)
+  const handleProjectPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setIsUploadingProjectPhoto(true);
+    const uploadedUrls: string[] = [];
+
+    for (const file of files) {
+      await new Promise<void>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          if (event.target?.result) {
+            const base64 = event.target.result as string;
+            let finalUrl = base64;
+            try {
+              const res = await fetch('/api/upload-media', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mediaBase64: base64, mediaType: 'image' }),
+              });
+              if (res.ok) {
+                const data = await res.json();
+                finalUrl = data.url;
+              }
+            } catch {
+              // fallback
             }
-          } catch {
-            // fallback
+            uploadedUrls.push(finalUrl);
           }
-          setProjectForm((prev) => ({ ...prev, imageUrl: base64 }));
-          showToast('Project photo loaded!');
-          setIsUploadingProjectPhoto(false);
-        }
-      };
-      reader.readAsDataURL(file);
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      });
     }
+
+    setProjectForm((prev) => {
+      const currentImages = prev.images || (prev.imageUrl ? [prev.imageUrl] : []);
+      const updatedImages = [...currentImages, ...uploadedUrls];
+      return {
+        ...prev,
+        images: updatedImages,
+        imageUrl: updatedImages[0] || prev.imageUrl || '',
+      };
+    });
+
+    showToast(`${uploadedUrls.length} project photo(s) uploaded!`);
+    setIsUploadingProjectPhoto(false);
+    if (e.target) e.target.value = '';
   };
 
-  const handleProjectVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setIsUploadingProjectVideo(true);
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        if (event.target?.result) {
-          const base64 = event.target.result as string;
-          try {
-            const res = await fetch('/api/upload-media', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                mediaBase64: base64,
-                mediaType: 'video',
-                extension: file.name.split('.').pop() || 'mp4',
-              }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              setProjectForm((prev) => ({ ...prev, videoUrl: data.url }));
-              showToast('Project video uploaded successfully!');
-              setIsUploadingProjectVideo(false);
-              return;
+  const handleProjectVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setIsUploadingProjectVideo(true);
+    const uploadedUrls: string[] = [];
+
+    for (const file of files) {
+      await new Promise<void>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          if (event.target?.result) {
+            const base64 = event.target.result as string;
+            let finalUrl = base64;
+            try {
+              const res = await fetch('/api/upload-media', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  mediaBase64: base64,
+                  mediaType: 'video',
+                  extension: file.name.split('.').pop() || 'mp4',
+                }),
+              });
+              if (res.ok) {
+                const data = await res.json();
+                finalUrl = data.url;
+              }
+            } catch {
+              // fallback
             }
-          } catch {
-            // fallback
+            uploadedUrls.push(finalUrl);
           }
-          setProjectForm((prev) => ({ ...prev, videoUrl: base64 }));
-          showToast('Project video loaded!');
-          setIsUploadingProjectVideo(false);
-        }
-      };
-      reader.readAsDataURL(file);
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      });
     }
+
+    setProjectForm((prev) => {
+      const currentVideos = prev.videos || (prev.videoUrl ? [prev.videoUrl] : []);
+      const updatedVideos = [...currentVideos, ...uploadedUrls];
+      return {
+        ...prev,
+        videos: updatedVideos,
+        videoUrl: updatedVideos[0] || prev.videoUrl || '',
+      };
+    });
+
+    showToast(`${uploadedUrls.length} project video(s) uploaded!`);
+    setIsUploadingProjectVideo(false);
+    if (e.target) e.target.value = '';
   };
 
   // Certificate Photo Upload Handler
@@ -1237,17 +1275,24 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
       date: '2026',
       imageUrl: '',
       videoUrl: '',
+      images: [],
+      videos: [],
       repoName: '',
       stars: 28,
       forks: 6,
       license: 'MIT',
       defaultBranch: 'main',
     });
+    setCustomImageInput('');
+    setCustomVideoInput('');
     setEditingProject(null);
     setIsAddingProject(true);
   };
 
   const handleOpenEditProject = (proj: ProjectItem) => {
+    const initialImages = proj.images && proj.images.length > 0 ? proj.images : (proj.imageUrl ? [proj.imageUrl] : []);
+    const initialVideos = proj.videos && proj.videos.length > 0 ? proj.videos : (proj.videoUrl ? [proj.videoUrl] : []);
+
     setEditingProject(proj);
     setProjectForm({
       ...proj,
@@ -1256,7 +1301,13 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
       license: proj.license || 'MIT',
       defaultBranch: proj.defaultBranch || 'main',
       repoName: proj.repoName || proj.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      images: initialImages,
+      videos: initialVideos,
+      imageUrl: initialImages[0] || '',
+      videoUrl: initialVideos[0] || '',
     });
+    setCustomImageInput('');
+    setCustomVideoInput('');
     setIsAddingProject(false);
   };
 
@@ -1264,10 +1315,21 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
     e.preventDefault();
     if (!projectForm.title || !projectForm.description) return;
 
+    const finalImages = projectForm.images && projectForm.images.length > 0
+      ? projectForm.images
+      : (projectForm.imageUrl ? [projectForm.imageUrl] : []);
+    const finalVideos = projectForm.videos && projectForm.videos.length > 0
+      ? projectForm.videos
+      : (projectForm.videoUrl ? [projectForm.videoUrl] : []);
+
     if (editingProject) {
       const updated: ProjectItem = {
         ...editingProject,
         ...(projectForm as ProjectItem),
+        images: finalImages,
+        videos: finalVideos,
+        imageUrl: finalImages[0] || '',
+        videoUrl: finalVideos[0] || '',
         repoName: projectForm.repoName || projectForm.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       };
       updateProject(updated);
@@ -1289,8 +1351,10 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
           `https://github.com/akashkumartiwariofficial-boop/${generatedSlug}`,
         metrics: projectForm.metrics,
         date: projectForm.date || '2026',
-        imageUrl: projectForm.imageUrl || '',
-        videoUrl: projectForm.videoUrl || '',
+        images: finalImages,
+        videos: finalVideos,
+        imageUrl: finalImages[0] || '',
+        videoUrl: finalVideos[0] || '',
         repoName: generatedSlug,
         stars: projectForm.stars || 28,
         forks: projectForm.forks || 6,
@@ -4346,141 +4410,198 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
                 </div>
               </div>
 
-              {/* Project Photo Upload (Optional) */}
+              {/* Project Photos & Screenshots (Multiple Upload) */}
               <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <ImageIcon className="w-3.5 h-3.5" />
-                    <span>Project Photo / Screenshot (Optional)</span>
+                    <span>Project Photos & Screenshots (Multiple Allowed)</span>
                   </label>
-                  <span className="text-[10px] font-mono text-slate-500">Optional</span>
+                  <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded">
+                    {(projectForm.images || []).length} Photo(s) Added
+                  </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  {/* Thumbnail */}
-                  <div className="w-28 h-20 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shrink-0 flex items-center justify-center relative shadow-md">
-                    {projectForm.imageUrl ? (
-                      <img
-                        src={projectForm.imageUrl}
-                        alt="Project Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <ImageIcon className="w-6 h-6 text-slate-600" />
-                    )}
-                    {isUploadingProjectPhoto && (
-                      <div className="absolute inset-0 bg-slate-950/80 flex items-center justify-center text-[10px] font-mono text-cyan-400">
-                        Uploading...
+                <p className="text-[11px] text-slate-300">
+                  Upload multiple diagrams, screenshots, or demo banners for this project. Select multiple files at once.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => projectPhotoInputRef.current?.click()}
+                    disabled={isUploadingProjectPhoto}
+                    className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{isUploadingProjectPhoto ? 'Uploading Photos...' : 'Upload Photos (Select Multiple)'}</span>
+                  </button>
+
+                  <input
+                    ref={projectPhotoInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleProjectPhotoUpload}
+                    className="hidden"
+                  />
+                </div>
+
+                {/* Add Photo by URL */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customImageInput}
+                    onChange={(e) => setCustomImageInput(e.target.value)}
+                    placeholder="Or enter image URL / asset path..."
+                    className="flex-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-300 font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!customImageInput.trim()) return;
+                      const current = projectForm.images || (projectForm.imageUrl ? [projectForm.imageUrl] : []);
+                      const updated = [...current, customImageInput.trim()];
+                      setProjectForm({ ...projectForm, images: updated, imageUrl: updated[0] });
+                      setCustomImageInput('');
+                      showToast('Photo URL added!');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-mono font-semibold"
+                  >
+                    Add URL
+                  </button>
+                </div>
+
+                {/* Multi-Photo Grid */}
+                {(projectForm.images || []).length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-900">
+                    {projectForm.images!.map((imgUrl, idx) => (
+                      <div key={idx} className="relative group rounded-xl overflow-hidden bg-slate-900 border border-slate-700 h-24 shadow-md">
+                        <img src={imgUrl} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = projectForm.images!.filter((_, i) => i !== idx);
+                              setProjectForm({ ...projectForm, images: next, imageUrl: next[0] || '' });
+                            }}
+                            className="px-2 py-1 rounded bg-rose-950 text-rose-300 text-[10px] font-mono hover:bg-rose-900 flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>Remove</span>
+                          </button>
+                          {idx === 0 ? (
+                            <span className="text-[9px] font-mono text-cyan-300 bg-cyan-950 px-1.5 py-0.5 rounded border border-cyan-500/40">Main Cover</span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const item = projectForm.images![idx];
+                                const filtered = projectForm.images!.filter((_, i) => i !== idx);
+                                const reordered = [item, ...filtered];
+                                setProjectForm({ ...projectForm, images: reordered, imageUrl: reordered[0] });
+                              }}
+                              className="text-[9px] font-mono text-cyan-400 hover:underline"
+                            >
+                              Make Cover
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-
-                  <div className="space-y-2 flex-1 w-full">
-                    <p className="text-[11px] text-slate-300">
-                      Upload an architecture diagram, interface screenshot, or demo banner.
-                    </p>
-
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => projectPhotoInputRef.current?.click()}
-                        disabled={isUploadingProjectPhoto}
-                        className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
-                      >
-                        <Upload className="w-3 h-3" />
-                        <span>Upload Photo</span>
-                      </button>
-
-                      {projectForm.imageUrl && (
-                        <button
-                          type="button"
-                          onClick={() => setProjectForm({ ...projectForm, imageUrl: '' })}
-                          className="px-2.5 py-1.5 rounded-lg bg-rose-950/50 text-rose-300 text-xs font-mono"
-                        >
-                          Remove
-                        </button>
-                      )}
-
-                      <input
-                        ref={projectPhotoInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProjectPhotoUpload}
-                        className="hidden"
-                      />
-                    </div>
-
-                    <input
-                      type="text"
-                      value={projectForm.imageUrl || ''}
-                      onChange={(e) => setProjectForm({ ...projectForm, imageUrl: e.target.value })}
-                      placeholder="Or enter image URL / asset path..."
-                      className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-300 font-mono focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* Project Video Upload (Optional) */}
+              {/* Project Videos Upload (Multiple Upload) */}
               <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <Video className="w-3.5 h-3.5" />
-                    <span>Project Demo Video (Optional)</span>
+                    <span>Project Demo Videos (Multiple Allowed)</span>
                   </label>
-                  <span className="text-[10px] font-mono text-slate-500">Optional</span>
+                  <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded">
+                    {(projectForm.videos || []).length} Video(s) Added
+                  </span>
                 </div>
 
-                <div className="space-y-3">
-                  {projectForm.videoUrl ? (
-                    <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 max-h-48 relative">
-                      <video
-                        src={projectForm.videoUrl}
-                        controls
-                        className="w-full max-h-48 object-contain bg-black"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setProjectForm({ ...projectForm, videoUrl: '' })}
-                        className="absolute top-2 right-2 px-2 py-1 rounded bg-rose-950/80 text-rose-300 text-[10px] font-mono"
-                      >
-                        Remove Video
-                      </button>
-                    </div>
-                  ) : null}
+                <p className="text-[11px] text-slate-300">
+                  Upload multiple MP4 / WebM recordings showing tool execution, exploit flow, or terminal walkthroughs. Select multiple files at once.
+                </p>
 
-                  <p className="text-[11px] text-slate-300">
-                    Upload an MP4 / WebM recording showing tool execution, exploit flow, or terminal demo.
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => projectVideoInputRef.current?.click()}
-                      disabled={isUploadingProjectVideo}
-                      className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all"
-                    >
-                      <Upload className="w-3 h-3" />
-                      <span>Upload Video</span>
-                    </button>
-
-                    <input
-                      ref={projectVideoInputRef}
-                      type="file"
-                      accept="video/*"
-                      onChange={handleProjectVideoUpload}
-                      className="hidden"
-                    />
-                  </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => projectVideoInputRef.current?.click()}
+                    disabled={isUploadingProjectVideo}
+                    className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{isUploadingProjectVideo ? 'Uploading Videos...' : 'Upload Videos (Select Multiple)'}</span>
+                  </button>
 
                   <input
-                    type="text"
-                    value={projectForm.videoUrl || ''}
-                    onChange={(e) => setProjectForm({ ...projectForm, videoUrl: e.target.value })}
-                    placeholder="Or enter direct video URL (e.g. /src/assets/videos/... or MP4 link)..."
-                    className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-300 font-mono focus:outline-none focus:border-cyan-400"
+                    ref={projectVideoInputRef}
+                    type="file"
+                    accept="video/*"
+                    multiple
+                    onChange={handleProjectVideoUpload}
+                    className="hidden"
                   />
                 </div>
+
+                {/* Add Video by URL */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customVideoInput}
+                    onChange={(e) => setCustomVideoInput(e.target.value)}
+                    placeholder="Or enter direct MP4 / WebM video URL..."
+                    className="flex-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-300 font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!customVideoInput.trim()) return;
+                      const current = projectForm.videos || (projectForm.videoUrl ? [projectForm.videoUrl] : []);
+                      const updated = [...current, customVideoInput.trim()];
+                      setProjectForm({ ...projectForm, videos: updated, videoUrl: updated[0] });
+                      setCustomVideoInput('');
+                      showToast('Video URL added!');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-mono font-semibold"
+                  >
+                    Add URL
+                  </button>
+                </div>
+
+                {/* Multi-Video List */}
+                {(projectForm.videos || []).length > 0 && (
+                  <div className="space-y-3 pt-2 border-t border-slate-900">
+                    {projectForm.videos!.map((vidUrl, idx) => (
+                      <div key={idx} className="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono text-cyan-300">
+                          <span className="font-bold flex items-center gap-1.5">
+                            <Video className="w-3.5 h-3.5 text-cyan-400" />
+                            <span>Demo Video #{idx + 1}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = projectForm.videos!.filter((_, i) => i !== idx);
+                              setProjectForm({ ...projectForm, videos: next, videoUrl: next[0] || '' });
+                            }}
+                            className="px-2 py-0.5 rounded bg-rose-950 text-rose-300 text-[10px] font-mono hover:bg-rose-900 flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>Remove Video</span>
+                          </button>
+                        </div>
+                        <video src={vidUrl} controls className="w-full max-h-44 object-contain rounded-lg bg-black" />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">

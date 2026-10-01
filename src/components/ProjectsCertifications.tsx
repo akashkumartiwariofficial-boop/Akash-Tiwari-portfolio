@@ -90,142 +90,160 @@ export const ProjectsCertifications: React.FC<ProjectsCertificationsProps> = ({
         </div>
 
         {/* Featured Certification Banner Spotlight */}
-        <div className="mb-14 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-cyan-950/40 via-slate-900/80 to-slate-900 border border-cyan-500/30 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        {certifications.length > 0 && (
+          <div className="mb-14 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-cyan-950/40 via-slate-900/80 to-slate-900 border border-cyan-500/30 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            <div className="lg:col-span-8 space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-xs text-cyan-300 font-mono">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Featured Credential · Cybersecurity Assessment</span>
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              <div className="lg:col-span-8 space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-xs text-cyan-300 font-mono">
+                  <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Featured Credential · Cybersecurity Assessment</span>
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-display font-bold text-white">
+                  Certified Cybersecurity Assessment & Vulnerability Analysis
+                </h3>
+
+                <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">
+                  Demonstrated practical competence in vulnerability assessment, threat modeling, security architecture evaluation, and automated penetration testing protocols.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2 pt-2">
+                  {['Vulnerability Assessment', 'Threat Modeling', 'Nmap Auditing', 'OWASP Standards', 'Risk Remediation'].map((skill, i) => (
+                    <span
+                      key={i}
+                      className="text-xs text-slate-400 bg-slate-900/90 border border-slate-800 px-2.5 py-1 rounded-md"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-display font-bold text-white">
-                Certified Cybersecurity Assessment & Vulnerability Analysis
-              </h3>
+              <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-center gap-3">
+                <div className="text-left lg:text-right font-mono text-xs text-slate-400">
+                  <span className="block text-slate-500">Credential ID:</span>
+                  <span className="text-cyan-300 font-medium">IITP-CS-SEC-2026-V889</span>
+                </div>
 
-              <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">
-                Demonstrated practical competence in vulnerability assessment, threat modeling, security architecture evaluation, and automated penetration testing protocols.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-2 pt-2">
-                {['Vulnerability Assessment', 'Threat Modeling', 'Nmap Auditing', 'OWASP Standards', 'Risk Remediation'].map((skill, i) => (
-                  <span
-                    key={i}
-                    className="text-xs text-slate-400 bg-slate-900/90 border border-slate-800 px-2.5 py-1 rounded-md"
-                  >
-                    {skill}
-                  </span>
-                ))}
+                <button
+                  onClick={() => certifications[0] && onSelectCertification(certifications[0])}
+                  className="px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-semibold transition-all inline-flex items-center gap-1.5 shadow-md shadow-cyan-500/20 active:scale-95"
+                >
+                  <span>View Verification Details</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
               </div>
-            </div>
-
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-center gap-3">
-              <div className="text-left lg:text-right font-mono text-xs text-slate-400">
-                <span className="block text-slate-500">Credential ID:</span>
-                <span className="text-cyan-300 font-medium">IITP-CS-SEC-2026-V889</span>
-              </div>
-
-              <button
-                onClick={() => certifications[0] && onSelectCertification(certifications[0])}
-                className="px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-semibold transition-all inline-flex items-center gap-1.5 shadow-md shadow-cyan-500/20 active:scale-95"
-              >
-                <span>View Verification Details</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
             </div>
           </div>
-        </div>
+        )}
 
         {/* View 1: Projects Showcase */}
         {activeTab === 'projects' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className="p-6 sm:p-7 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/40 transition-all duration-200 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-4 mb-3">
-                    <span className="text-xs font-mono text-cyan-400 bg-cyan-950/40 px-2.5 py-1 rounded border border-cyan-500/30">
-                      {project.category}
-                    </span>
-                    <span className="text-xs font-mono text-slate-500">{project.date}</span>
-                  </div>
-
-                  <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
-                    {project.title}
-                  </h3>
-
-                  <p className="text-sm text-slate-300 mt-2.5 leading-relaxed">
-                    {project.summary}
-                  </p>
-
-                  {/* Metrics Badge */}
-                  {project.metrics && (
-                    <div className="mt-3.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs font-mono text-emerald-400 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      <span>{project.metrics}</span>
-                    </div>
-                  )}
-
-                  {/* Photo / Video Badges if available */}
-                  {(project.imageUrl || project.videoUrl) && (
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      {project.imageUrl && (
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono">
-                          <ImageIcon className="w-3 h-3 text-emerald-400" />
-                          <span>Screenshot Attached</span>
-                        </div>
-                      )}
-                      {project.videoUrl && (
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono">
-                          <Video className="w-3 h-3 text-cyan-400" />
-                          <span>Demo Video</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Highlights */}
-                  <ul className="mt-4 space-y-1.5 text-xs text-slate-400">
-                    {project.highlights.slice(0, 2).map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&rsaquo;</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.technologies.slice(0, 3).map((tech, idx) => (
-                      <span
-                        key={idx}
-                        className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded"
-                      >
-                        {tech}
+          projects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {projects.map((project) => (
+                <div
+                  key={project.id}
+                  className="p-6 sm:p-7 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/40 transition-all duration-200 flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-4 mb-3">
+                      <span className="text-xs font-mono text-cyan-400 bg-cyan-950/40 px-2.5 py-1 rounded border border-cyan-500/30">
+                        {project.category}
                       </span>
-                    ))}
-                    {project.technologies.length > 3 && (
-                      <span className="text-[11px] font-mono text-slate-500 px-1 py-0.5">
-                        +{project.technologies.length - 3}
-                      </span>
+                      <span className="text-xs font-mono text-slate-500">{project.date}</span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                      {project.title}
+                    </h3>
+
+                    <p className="text-sm text-slate-300 mt-2.5 leading-relaxed">
+                      {project.summary}
+                    </p>
+
+                    {/* Metrics Badge */}
+                    {project.metrics && (
+                      <div className="mt-3.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-xs font-mono text-emerald-400 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>{project.metrics}</span>
+                      </div>
                     )}
+
+                    {/* Photo / Video Badges if available */}
+                    {(() => {
+                      const imgCount = (project.images && project.images.length > 0) ? project.images.length : (project.imageUrl ? 1 : 0);
+                      const vidCount = (project.videos && project.videos.length > 0) ? project.videos.length : (project.videoUrl ? 1 : 0);
+                      if (imgCount === 0 && vidCount === 0) return null;
+
+                      return (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          {imgCount > 0 && (
+                            <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono">
+                              <ImageIcon className="w-3 h-3 text-emerald-400" />
+                              <span>{imgCount === 1 ? 'Screenshot Attached' : `${imgCount} Screenshots`}</span>
+                            </div>
+                          )}
+                          {vidCount > 0 && (
+                            <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono">
+                              <Video className="w-3 h-3 text-cyan-400" />
+                              <span>{vidCount === 1 ? 'Demo Video' : `${vidCount} Demo Videos`}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    {/* Highlights */}
+                    <ul className="mt-4 space-y-1.5 text-xs text-slate-400">
+                      {project.highlights.slice(0, 2).map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <span className="text-cyan-400 mt-0.5">&rsaquo;</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <button
-                    onClick={() => onSelectProject(project)}
-                    className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 transition-colors"
-                  >
-                    <span>Architecture</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.technologies.slice(0, 3).map((tech, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {project.technologies.length > 3 && (
+                        <span className="text-[11px] font-mono text-slate-500 px-1 py-0.5">
+                          +{project.technologies.length - 3}
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => onSelectProject(project)}
+                      className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 transition-colors"
+                    >
+                      <span>Architecture</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-slate-800/80">
+              <FolderGit2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-slate-300">0 Projects Currently Listed</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
+                No projects are currently listed. New projects will be added here via Admin Portal.
+              </p>
+            </div>
+          )
         )}
 
         {/* View 2: CTF & Hands-On Security Platforms */}
@@ -318,67 +336,77 @@ export const ProjectsCertifications: React.FC<ProjectsCertificationsProps> = ({
 
         {/* View 3: All Certifications */}
         {activeTab === 'certifications' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {certifications.map((cert) => (
-              <div
-                key={cert.id}
-                className="p-6 sm:p-7 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-mono text-cyan-400">
-                      Issued {cert.issuedDate}
-                    </span>
-                    <span className="text-xs text-slate-500 font-mono">
-                      {cert.credentialId}
-                    </span>
+          certifications.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {certifications.map((cert) => (
+                <div
+                  key={cert.id}
+                  className="p-6 sm:p-7 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-mono text-cyan-400">
+                        Issued {cert.issuedDate}
+                      </span>
+                      <span className="text-xs text-slate-500 font-mono">
+                        {cert.credentialId}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-white">{cert.title}</h3>
+                    <p className="text-xs text-cyan-300 font-medium mt-1">{cert.issuer}</p>
+
+                    <p className="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+                      {cert.description}
+                    </p>
+
+                    {cert.imageUrl && (
+                      <div className="mt-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono w-fit">
+                        <ImageIcon className="w-3 h-3 text-emerald-400" />
+                        <span>Certificate Document Attached</span>
+                      </div>
+                    )}
+
+                    <div className="mt-4">
+                      <span className="text-[11px] text-slate-400 block mb-1.5 font-mono">Competencies Evaluated:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {cert.skillsCovered.map((skill, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs text-slate-300 bg-slate-950 px-2.5 py-1 rounded border border-slate-800"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white">{cert.title}</h3>
-                  <p className="text-xs text-cyan-300 font-medium mt-1">{cert.issuer}</p>
+                  <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
+                    <span className="text-xs text-emerald-400 flex items-center gap-1.5">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      <span>Verified Authenticity</span>
+                    </span>
 
-                  <p className="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
-                    {cert.description}
-                  </p>
-
-                  {cert.imageUrl && (
-                    <div className="mt-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono w-fit">
-                      <ImageIcon className="w-3 h-3 text-emerald-400" />
-                      <span>Certificate Document Attached</span>
-                    </div>
-                  )}
-
-                  <div className="mt-4">
-                    <span className="text-[11px] text-slate-400 block mb-1.5 font-mono">Competencies Evaluated:</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {cert.skillsCovered.map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs text-slate-300 bg-slate-950 px-2.5 py-1 rounded border border-slate-800"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
+                    <button
+                      onClick={() => onSelectCertification(cert)}
+                      className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                    >
+                      View Details &rarr;
+                    </button>
                   </div>
                 </div>
-
-                <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
-                  <span className="text-xs text-emerald-400 flex items-center gap-1.5">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Verified Authenticity</span>
-                  </span>
-
-                  <button
-                    onClick={() => onSelectCertification(cert)}
-                    className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
-                  >
-                    View Details &rarr;
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-slate-800/80">
+              <Award className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-slate-300">0 Certifications Currently Listed</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
+                No certifications are currently listed. Verified certificates will be added here via Admin Portal.
+              </p>
+            </div>
+          )
         )}
       </div>
     </section>

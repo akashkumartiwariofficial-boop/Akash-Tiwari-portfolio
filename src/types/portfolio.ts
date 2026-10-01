@@ -22,9 +22,11 @@ export interface ProjectItem {
   githubUrl?: string;
   architectureDetails?: string;
   date: string;
-  // Optional Photo & Video for Project
+  // Optional Single & Multiple Photos & Videos for Project
   imageUrl?: string;
   videoUrl?: string;
+  images?: string[];
+  videos?: string[];
   // GitHub Repository Metadata for authentic GitHub view
   repoName?: string;
   stars?: number;

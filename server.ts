@@ -101,28 +101,11 @@ EXHAUSTIVE KNOWLEDGE BASE ABOUT AKASH KUMAR TIWARI:
 - Cybersecurity, CTFs & Practical Exploitation:
   * Hack The Box (HTB): 25+ machines owned and rooted. Expert in Linux privilege escalation, SUID binary exploitation, kernel exploits, web fuzzing, and lateral movement.
   * TryHackMe (THM): 40+ security rooms completed across network penetration, Wireshark packet capture analysis, OSINT threat investigations, and digital forensics.
-  * Certifications:
-    1. Cybersecurity Assessment & Vulnerability Analysis (ID: IITP-CS-SEC-2026-V889) — Issued 2026.
-    2. Advanced Ethical Hacking & Defensive Systems (ID: IITG-CS-EH-9402) — Issued 2025.
+  * Certifications: Currently 0 certifications listed (clean slate).
   * Practical Security Toolkit: Kali Linux, Nmap, Burp Suite Professional, Wireshark, Metasploit, Ghidra, GDB, Scapy, Radare2, John the Ripper, Hashcat, Docker, Linux Auditd.
 
 - Key Featured Engineering & Research Projects:
-  1. AI-Powered Network Anomaly & Intrusion Detection:
-     - Tech: Python, Scapy, Scikit-Learn (Isolation Forest / XGBoost), Linux Raw Sockets.
-     - Metrics: 98.4% detection rate for zero-day flows and stealth port scans.
-     - Repo: https://github.com/akashkumartiwariofficial-boop/ai-network-anomaly-detection
-  2. Automated Reconnaissance & Attack Surface Auditor:
-     - Tech: Python, Nmap NSE, Bash Scripting, OSINT APIs.
-     - Metrics: Slashed corporate recon workflow from 2.5 hours to 8 minutes.
-     - Repo: https://github.com/akashkumartiwariofficial-boop/attack-surface-auditor
-  3. Forensics Triage & Incident Response Playbook Engine:
-     - Tech: Linux Internals, Python, Auditd, Bash.
-     - Metrics: Rapid capture of 14 volatile telemetry artifacts with SHA-256 chain-of-custody hashes.
-     - Repo: https://github.com/akashkumartiwariofficial-boop/forensics-triage-engine
-  4. Zero-Knowledge Encrypted Messaging & Key Exchange Protocol:
-     - Tech: Rust, ECDH (Elliptic-Curve Diffie-Hellman), AES-256-GCM, HKDF-SHA256.
-     - Metrics: Sub-millisecond forward secrecy framing resilient against MitM.
-     - Repo: https://github.com/akashkumartiwariofficial-boop/zk-encrypted-protocol
+  Currently 0 projects listed (clean slate). New projects can be dynamically added via the Secret Admin Management Portal.
 
 - Contact & Profiles:
   * Primary Official Email: akashkumartiwariofficial@gmail.com

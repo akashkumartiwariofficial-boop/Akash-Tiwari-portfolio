@@ -83,52 +83,77 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, certificati
                   </p>
                 </div>
 
-                {/* PROJECT MEDIA: PHOTO (SCREENSHOT / ARCHITECTURE) */}
-                {project.imageUrl && (
-                  <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 space-y-2">
-                    <div className="px-4 py-2 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
-                      <span className="flex items-center gap-1.5 text-cyan-300">
-                        <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>Project Architecture / UI Screenshot</span>
-                      </span>
-                      <button
-                        onClick={() => setLightboxImage(project.imageUrl!)}
-                        className="text-[11px] text-cyan-400 hover:underline flex items-center gap-1"
-                      >
-                        <Maximize2 className="w-3 h-3" />
-                        <span>Enlarge</span>
-                      </button>
-                    </div>
-                    <div className="p-2 cursor-pointer" onClick={() => setLightboxImage(project.imageUrl!)}>
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className="w-full max-h-72 object-contain rounded-xl bg-black/40 hover:opacity-95 transition-opacity"
-                      />
-                    </div>
-                  </div>
-                )}
+                {/* PROJECT MEDIA: PHOTOS & SCREENSHOTS GALLERY */}
+                {(() => {
+                  const allImages = project.images && project.images.length > 0
+                    ? project.images
+                    : (project.imageUrl ? [project.imageUrl] : []);
+                  if (allImages.length === 0) return null;
 
-                {/* PROJECT MEDIA: VIDEO DEMO */}
-                {project.videoUrl && (
-                  <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 space-y-2">
-                    <div className="px-4 py-2 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
-                      <span className="flex items-center gap-1.5 text-cyan-300">
-                        <Video className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>Project Demonstration Video</span>
-                      </span>
-                      <span className="text-[10px] text-emerald-400 font-mono">Interactive Player</span>
+                  return (
+                    <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 space-y-2">
+                      <div className="px-4 py-2 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+                        <span className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                          <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Project Photos & Diagrams ({allImages.length})</span>
+                        </span>
+                        <span className="text-[10px] text-cyan-400">Click to Enlarge</span>
+                      </div>
+                      <div className={`p-3 gap-3 ${allImages.length > 1 ? 'grid grid-cols-1 sm:grid-cols-2' : 'block'}`}>
+                        {allImages.map((imgUrl, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => setLightboxImage(imgUrl)}
+                            className="relative group rounded-xl overflow-hidden bg-black/50 border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-all"
+                          >
+                            <img
+                              src={imgUrl}
+                              alt={`${project.title} screenshot ${idx + 1}`}
+                              className="w-full max-h-64 object-contain mx-auto group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute top-2 right-2 p-1.5 rounded-lg bg-slate-950/80 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Maximize2 className="w-3.5 h-3.5" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="p-2">
-                      <video
-                        src={project.videoUrl}
-                        controls
-                        className="w-full max-h-80 object-contain rounded-xl bg-black"
-                        poster={project.imageUrl}
-                      />
+                  );
+                })()}
+
+                {/* PROJECT MEDIA: DEMO VIDEOS */}
+                {(() => {
+                  const allVideos = project.videos && project.videos.length > 0
+                    ? project.videos
+                    : (project.videoUrl ? [project.videoUrl] : []);
+                  if (allVideos.length === 0) return null;
+
+                  return (
+                    <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 space-y-2">
+                      <div className="px-4 py-2 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+                        <span className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                          <Video className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Project Demonstration Videos ({allVideos.length})</span>
+                        </span>
+                        <span className="text-[10px] text-emerald-400 font-mono">Interactive Player</span>
+                      </div>
+                      <div className="p-3 space-y-4">
+                        {allVideos.map((vidUrl, idx) => (
+                          <div key={idx} className="rounded-xl overflow-hidden bg-black border border-slate-800 p-2 space-y-1.5">
+                            {allVideos.length > 1 && (
+                              <span className="text-[10px] font-mono text-slate-400 block px-1">Demo Recording #{idx + 1}</span>
+                            )}
+                            <video
+                              src={vidUrl}
+                              controls
+                              className="w-full max-h-80 object-contain rounded-lg bg-black"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* GitHub Repository Spec Card */}
                 {project.githubUrl && (

@@ -1,0 +1,86 @@
+{
+  "personalInfo": {
+    "name": "Akash Tiwari",
+    "title": "IIT Patna — CS, AI & Cybersecurity | Cybersecurity Enthusiast & Developer",
+    "email": "akashkumartiwariofficial@gmail.com",
+    "secondaryEmail": "akashkumarofficial@gmail.com",
+    "location": "Patna, Bihar, India",
+    "institute": "Indian Institute of Technology, Patna (IIT Patna)",
+    "pronouns": "He/Him",
+    "shortIntro": "Passionate about Cybersecurity, AI, Ethical Hacking, and Software Development.",
+    "availability": "Available for Summer Internships, Research Collaborations, and Security Projects",
+    "social": {
+      "github": "https://github.com/akashkumartiwariofficial-boop",
+      "linkedin": "https://www.linkedin.com/in/akash-tiwari-a490283b4/",
+      "hackthebox": "https://profile.hackthebox.com/",
+      "tryhackme": "https://tryhackme.com/p/akash.kumar.tiwari",
+      "twitter": "https://x.com/akash_tiwari",
+      "youtube": "https://youtube.com/@akashtiwari-cyber",
+      "instagram": "https://instagram.com/akash_tiwari_official",
+      "reddit": "https://reddit.com/u/akash_tiwari_security",
+      "flipkart": "https://dl.flipkart.com/s/Iz0x8jNNNN",
+      "amazon": "https://www.amazon.in/dp/B0F1234567",
+      "telegram": "https://t.me/akash_tiwari_cyber",
+      "discord": "https://discord.com/users/akash_tiwari",
+      "facebook": "https://facebook.com/akash.tiwari.official",
+      "medium": "https://medium.com/@akash_tiwari",
+      "substack": "https://substack.com/@akashtiwari"
+    }
+  },
+  "skills": [
+    {
+      "id": "kali",
+      "name": "Kali Linux",
+      "category": "security",
+      "level": "Advanced",
+      "description": "Offensive security OS environment, customized auditing workflows, forensic tools orchestration.",
+      "associatedOrg": "IIT Patna",
+      "iconName": "Terminal"
+    },
+    {
+      "id": "nmap",
+      "name": "Nmap & Network Mapping",
+      "category": "networking",
+      "level": "Advanced",
+      "description": "Host discovery, NSE scripting, firewall evasion, service fingerprinting, port scanning automation.",
+      "associatedOrg": "IIT Patna",
+      "iconName": "Network"
+    },
+    {
+      "id": "burp",
+      "name": "Burp Suite",
+      "category": "security",
+      "level": "Proficient",
+      "description": "Web application penetration testing, request interception, Repeater/Intruder fuzzing, OWASP Top 10.",
+      "associatedOrg": "IIT Patna",
+      "iconName": "ShieldAlert"
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "category": "programming",
+      "level": "Advanced",
+      "description": "Scapy raw socket crafting, exploit prototyping, machine learning automation, custom reconnaissance tools.",
+      "associatedOrg": "IIT Patna",
+      "iconName": "Code"
+    }
+  ],
+  "projects": [],
+  "certifications": [],
+  "books": [
+    {
+      "id": "book-civic-sense",
+      "title": "The Civic Sense of Indian People",
+      "subtitle": "An Honest Look at Our Habits and Responsibilities",
+      "author": "Akash Tiwari",
+      "publisher": "Bookspot Publishers",
+      "publishedDate": "8 October 2025",
+      "status": "Published on 8 Oct 2025 · Available on Flipkart & Amazon",
+      "expectedYear": "2025",
+      "flipkartUrl": "https://dl.flipkart.com/s/Iz0x8jNNNN",
+      "amazonUrl": "https://amzn.in/d/0cj4pQPk",
+      "coverImage": "/src/assets/images/book_cover_1790795224241.jpg",
+      "synopsis": "A deeply reflective and timely exploration of contemporary Indian society through the lens of civic conscience."
+    }
+  ]
+}

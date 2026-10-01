@@ -75,11 +75,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const res = await fetch('/api/portfolio-data');
         if (res.ok) {
           const data = await res.json();
-          if (data && (data.personalInfo || data.books)) {
+          if (data && (data.personalInfo || data.books || Array.isArray(data.projects) || Array.isArray(data.certifications))) {
             if (data.personalInfo) setPersonalInfo(data.personalInfo);
             if (data.skills) setSkills(data.skills);
-            if (data.projects) setProjects(data.projects);
-            if (data.certifications) setCertifications(data.certifications);
+            if (Array.isArray(data.projects)) setProjects(data.projects);
+            if (Array.isArray(data.certifications)) setCertifications(data.certifications);
 
             let loadedBooks: BookItem[] = defaultBooks;
             if (Array.isArray(data.books) && data.books.length > 0) {

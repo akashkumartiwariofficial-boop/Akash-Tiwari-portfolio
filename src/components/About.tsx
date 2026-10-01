@@ -24,7 +24,8 @@ import {
 import { EDUCATION_LIST } from '../data/portfolioData';
 import { usePortfolio } from '../context/PortfolioContext';
 
-const DEFAULT_PORTRAIT = '/src/assets/images/akash_suit_portrait_1790780374642.jpg';
+const DEFAULT_PORTRAIT = '/src/assets/images/akash_profile.jpg';
+const FALLBACK_PORTRAIT = '/src/assets/images/akash_profile.jpg';
 const STORAGE_KEY = 'akash_profile_photo_v5';
 
 interface AboutProps {
@@ -46,12 +47,15 @@ export const About: React.FC<AboutProps> = ({ onOpenGallery }) => {
           setPhotoUrl(`${data.path}?t=${Date.now()}`);
         } else {
           const saved = localStorage.getItem(STORAGE_KEY);
-          if (saved) setPhotoUrl(saved);
+          if (saved && !saved.includes('1790780374642')) {
+            setPhotoUrl(saved);
+          } else {
+            setPhotoUrl(DEFAULT_PORTRAIT);
+          }
         }
       })
       .catch(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) setPhotoUrl(saved);
+        setPhotoUrl(DEFAULT_PORTRAIT);
       });
   }, []);
 
@@ -117,6 +121,13 @@ export const About: React.FC<AboutProps> = ({ onOpenGallery }) => {
                   src={photoUrl}
                   alt="Akash Kumar Tiwari - Computer Science IIT Patna"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.dataset.failed) {
+                      target.dataset.failed = 'true';
+                      target.src = DEFAULT_PORTRAIT;
+                    }
+                  }}
                   className="relative w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
 
@@ -425,6 +436,13 @@ export const About: React.FC<AboutProps> = ({ onOpenGallery }) => {
               src={photoUrl}
               alt="Akash Kumar Tiwari Full Resolution Portrait"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (!target.dataset.failed) {
+                  target.dataset.failed = 'true';
+                  target.src = DEFAULT_PORTRAIT;
+                }
+              }}
               className={`max-h-[80vh] max-w-[85vw] object-contain rounded-2xl shadow-2xl border-2 border-cyan-500/40 transition-transform duration-300 ${
                 isZoomed ? 'scale-125 cursor-zoom-out' : 'cursor-zoom-in'
               }`}

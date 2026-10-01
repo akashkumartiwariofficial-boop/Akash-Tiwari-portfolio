@@ -343,7 +343,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
     expectedYear: '2025',
     flipkartUrl: 'https://dl.flipkart.com/s/Iz0x8jNNNN',
     amazonUrl: 'https://amzn.in/d/0cj4pQPk',
-    coverImage: '/src/assets/images/book_cover_civic_sense.svg',
+    coverImage: '/src/assets/images/book_cover_1790795224241.jpg',
     synopsis: '',
     authorNote: '',
   });
@@ -360,7 +360,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
       expectedYear: '2025',
       flipkartUrl: '',
       amazonUrl: '',
-      coverImage: '/src/assets/images/book_cover_civic_sense.svg',
+      coverImage: '/src/assets/images/book_cover_1790795224241.jpg',
       synopsis: '',
       authorNote: '',
     });
@@ -420,7 +420,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
         ...editingBook,
         ...(bookForm as BookItem),
         title: bookForm.title.trim(),
-        coverImage: bookForm.coverImage || '/src/assets/images/book_cover_civic_sense.svg',
+        coverImage: bookForm.coverImage || '/src/assets/images/book_cover_1790795224241.jpg',
       };
       updateBook(updated);
       showToast(`Book "${updated.title}" updated successfully!`);
@@ -436,7 +436,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
         expectedYear: bookForm.expectedYear || '2025',
         flipkartUrl: bookForm.flipkartUrl || '',
         amazonUrl: bookForm.amazonUrl || '',
-        coverImage: bookForm.coverImage || '/src/assets/images/book_cover_civic_sense.svg',
+        coverImage: bookForm.coverImage || '/src/assets/images/book_cover_1790795224241.jpg',
         synopsis: bookForm.synopsis || '',
         authorNote: bookForm.authorNote || '',
         keyThemes: [
@@ -2579,7 +2579,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
                     <div className="w-full sm:w-48 max-w-[200px] shrink-0 mx-auto md:mx-0">
                       <div className="aspect-[3/4] relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl group">
                         <img
-                          src={b.coverImage || '/src/assets/images/book_cover_civic_sense.svg'}
+                          src={b.coverImage || '/src/assets/images/book_cover_1790795224241.jpg'}
                           alt={b.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />

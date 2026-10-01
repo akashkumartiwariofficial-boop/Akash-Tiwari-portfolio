@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Filter,
+  Eye,
   Image as ImageIcon,
 } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
@@ -24,6 +25,7 @@ export interface GalleryPhoto {
   date?: string;
   location?: string;
   featured?: boolean;
+  views?: number;
 }
 
 interface GalleryPageProps {
@@ -38,6 +40,97 @@ const CATEGORIES = [
   'Tech & Research',
   'Author & Achievements',
   'Custom Uploads',
+];
+
+const INITIAL_GALLERY_PHOTOS: GalleryPhoto[] = [
+  {
+    id: 'photo-1',
+    title: 'Executive Navy Suit Formal Portrait',
+    category: 'Formal',
+    url: '/src/assets/images/akash_profile.jpg',
+    description: 'Official formal portrait of Akash Kumar Tiwari in classic 3-piece navy suit at IIT Patna.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: true,
+    views: 1420,
+  },
+  {
+    id: 'photo-2',
+    title: 'IIT Patna Main Campus & Academic Blocks',
+    category: 'Campus & IIT Patna',
+    url: '/src/assets/images/photo_1790797716011.jpg',
+    description: 'Official campus life and academic block view at Indian Institute of Technology Patna (IIT Patna).',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: true,
+    views: 980,
+  },
+  {
+    id: 'photo-3',
+    title: 'Academic Scholar & Conference Portrait',
+    category: 'Formal',
+    url: '/src/assets/images/gallery_1790801509360.jpg',
+    description: 'LinkedIn & academic research portrait for cybersecurity summits, workshops, and papers.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: true,
+    views: 850,
+  },
+  {
+    id: 'photo-4',
+    title: 'Cybersecurity & CTF Defense Lab',
+    category: 'Tech & Research',
+    url: '/src/assets/images/photo_1790797770121.jpg',
+    description: 'Deep packet analysis, Kali Linux defensive tooling, and TryHackMe / HackTheBox challenge lab.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: true,
+    views: 1120,
+  },
+  {
+    id: 'photo-5',
+    title: 'Author Debut: Civic Sense of Indian People',
+    category: 'Author & Achievements',
+    url: '/src/assets/images/book_cover_1790795224241.jpg',
+    description: 'Upcoming 2026 non-fiction book exploring civic responsibility, traffic ethics, and public empathy in India.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: true,
+    views: 1650,
+  },
+  {
+    id: 'photo-6',
+    title: 'Cybersecurity Leadership & Keynote Presentation',
+    category: 'Tech & Research',
+    url: '/src/assets/images/gallery_1790795201085.jpg',
+    description: 'Technical presentation on network security, web application vulnerability assessment, and threat modeling.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: false,
+    views: 740,
+  },
+  {
+    id: 'photo-7',
+    title: 'LinkedIn Professional Headshot',
+    category: 'Formal',
+    url: '/src/assets/images/akash_tiwari_linkedin_1790780031685.jpg',
+    description: 'Professional profile headshot for computer science research collaborations and engineering outreach.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: false,
+    views: 630,
+  },
+  {
+    id: 'photo-8',
+    title: 'IIT Patna Executive Formal Portrait',
+    category: 'Formal',
+    url: '/src/assets/images/akash_suit_portrait_1790780374642.jpg',
+    description: 'Formal executive portrait taken during academic honours and department leadership events.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: false,
+    views: 810,
+  },
 ];
 
 export const GalleryPage: React.FC<GalleryPageProps> = ({
@@ -69,65 +162,19 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
     const cached = localStorage.getItem('akash_gallery_cache');
     if (cached) {
       try {
-        setPhotos(JSON.parse(cached));
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length >= 5) {
+          setPhotos(parsed);
+          setLoading(false);
+          return;
+        }
       } catch {
         // ignore
       }
-    } else {
-      // Default initial photos
-      setPhotos([
-        {
-          id: 'photo-1',
-          title: 'Executive Navy Suit Formal Portrait',
-          category: 'Formal',
-          url: '/src/assets/images/akash_suit_portrait_1790780374642.jpg',
-          description: 'Official formal portrait of Akash Kumar Tiwari in classic 3-piece navy suit at IIT Patna.',
-          date: '2026',
-          location: 'Patna, Bihar, India',
-          featured: true,
-        },
-        {
-          id: 'photo-2',
-          title: 'Academic Scholar & Conference Portrait',
-          category: 'Formal',
-          url: '/src/assets/images/akash_tiwari_linkedin_1790780031685.jpg',
-          description: 'LinkedIn & academic research portrait for cybersecurity summits, workshops, and papers.',
-          date: '2026',
-          location: 'Patna, Bihar, India',
-          featured: true,
-        },
-        {
-          id: 'photo-3',
-          title: 'IIT Patna Main Campus & Academic Blocks',
-          category: 'Campus & IIT Patna',
-          url: '/src/assets/images/photo_1790797716011.jpg',
-          description: 'Official campus life and academic block view at Indian Institute of Technology Patna (IIT Patna).',
-          date: '2026',
-          location: 'Patna, Bihar, India',
-          featured: true,
-        },
-        {
-          id: 'photo-4',
-          title: 'Cybersecurity & CTF Defense Lab',
-          category: 'Tech & Research',
-          url: '/src/assets/images/cyber_network_banner_1790761411174.jpg',
-          description: 'Deep packet analysis, Kali Linux defensive tooling, and TryHackMe / HackTheBox challenge lab.',
-          date: '2026',
-          location: 'Patna, Bihar, India',
-          featured: false,
-        },
-        {
-          id: 'photo-5',
-          title: 'Author Debut: Civic Sense of Indian People',
-          category: 'Author & Achievements',
-          url: '/src/assets/images/book_cover_civic_sense_1790761396423.jpg',
-          description: 'Upcoming 2026 non-fiction book exploring civic responsibility, traffic ethics, and public empathy in India.',
-          date: '2026',
-          location: 'Patna, Bihar, India',
-          featured: false,
-        },
-      ]);
     }
+
+    setPhotos(INITIAL_GALLERY_PHOTOS);
+    localStorage.setItem('akash_gallery_cache', JSON.stringify(INITIAL_GALLERY_PHOTOS));
     setLoading(false);
   };
 
@@ -150,19 +197,33 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
       ? filteredPhotos[lightboxIndex]
       : null;
 
+  const handleViewPhoto = (index: number) => {
+    setLightboxIndex(index);
+    setIsZoomed(false);
+    const photo = filteredPhotos[index];
+    if (photo) {
+      setPhotos((prev) =>
+        prev.map((p) =>
+          p.id === photo.id ? { ...p, views: (p.views || 0) + 1 } : p
+        )
+      );
+      fetch(`/api/gallery-photos/${photo.id}/view`, { method: 'POST' }).catch(() => {});
+    }
+  };
+
   const handleNextPhoto = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (lightboxIndex !== null) {
-      setLightboxIndex((prev) => ((prev ?? 0) + 1) % filteredPhotos.length);
-      setIsZoomed(false);
+      const nextIdx = (lightboxIndex + 1) % filteredPhotos.length;
+      handleViewPhoto(nextIdx);
     }
   };
 
   const handlePrevPhoto = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (lightboxIndex !== null) {
-      setLightboxIndex((prev) => ((prev ?? 0) - 1 + filteredPhotos.length) % filteredPhotos.length);
-      setIsZoomed(false);
+      const prevIdx = (lightboxIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+      handleViewPhoto(prevIdx);
     }
   };
 
@@ -312,10 +373,7 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
             {filteredPhotos.map((photo, index) => (
               <div
                 key={photo.id}
-                onClick={() => {
-                  setLightboxIndex(index);
-                  setIsZoomed(false);
-                }}
+                onClick={() => handleViewPhoto(index)}
                 className="group relative rounded-2xl overflow-hidden bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 shadow-xl transition-all duration-300 flex flex-col cursor-pointer hover:-translate-y-1"
               >
                 {/* Image Container with 4:5 aspect ratio */}
@@ -324,6 +382,9 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
                     src={photo.url}
                     alt={photo.title}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.currentTarget.src = '/src/assets/images/akash_profile.jpg';
+                    }}
                     className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                   />
 
@@ -333,26 +394,25 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
                       {photo.category}
                     </span>
 
-                    {photo.location && (
-                      <span className="px-2 py-0.5 rounded-full bg-slate-950/85 border border-slate-800 text-[10px] font-mono text-slate-300 backdrop-blur-md">
-                        {photo.location}
-                      </span>
-                    )}
+                    <span className="px-2.5 py-0.5 rounded-full bg-slate-950/85 border border-slate-800 text-[10px] font-mono text-cyan-400 backdrop-blur-md flex items-center gap-1.5">
+                      <Eye className="w-3 h-3 text-cyan-400" />
+                      <span>{(photo.views || 0).toLocaleString()} Views</span>
+                    </span>
                   </div>
 
                   {/* Hover Overlay with Expand & View Full */}
-                  <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-4">
+                  <div className="absolute inset-0 bg-slate-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2.5 p-4">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setLightboxIndex(index);
+                        handleViewPhoto(index);
                       }}
-                      className="p-3 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-500/30 transition-transform active:scale-95"
+                      className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold font-mono text-xs shadow-lg shadow-cyan-500/30 transition-transform active:scale-95 flex items-center gap-2"
                       title="View Full Resolution"
                     >
-                      <Maximize2 className="w-5 h-5" />
+                      <Eye className="w-4 h-4" />
+                      <span>View Full Photo</span>
                     </button>
-                    <span className="text-[11px] font-mono text-white font-medium">Click to Expand</span>
                   </div>
                 </div>
 
@@ -376,16 +436,30 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
                       <span>{photo.date || '2026'}</span>
                     </span>
 
-                    <a
-                      href={photo.url}
-                      download={`${photo.title.replace(/\s+/g, '_')}.jpg`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 border border-slate-800 transition-colors text-[11px] font-mono"
-                      title="Download Photo"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Download</span>
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewPhoto(index);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-cyan-200 border border-cyan-500/30 transition-colors text-[11px] font-mono"
+                        title="View Full Photo"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>View</span>
+                      </button>
+
+                      <a
+                        href={photo.url}
+                        download={`${photo.title.replace(/\s+/g, '_')}.jpg`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-cyan-300 border border-slate-800 transition-colors text-[11px] font-mono"
+                        title="Download Photo"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -405,10 +479,10 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({
             className="absolute top-4 left-4 right-4 flex items-center justify-between z-20"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/30 text-xs font-mono text-cyan-300">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/30 text-xs font-mono text-cyan-300">
+              <Eye className="w-3.5 h-3.5 text-cyan-400" />
               <span>
-                {currentLightboxPhoto.title} ({lightboxIndex! + 1}/{filteredPhotos.length})
+                {currentLightboxPhoto.title} &bull; {(currentLightboxPhoto.views || 0).toLocaleString()} Views ({lightboxIndex! + 1}/{filteredPhotos.length})
               </span>
             </div>
 

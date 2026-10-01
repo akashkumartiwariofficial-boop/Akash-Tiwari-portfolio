@@ -341,7 +341,7 @@ export const BOOK_DETAILS: BookItem = {
   expectedYear: '2025',
   flipkartUrl: 'https://dl.flipkart.com/s/Iz0x8jNNNN',
   amazonUrl: 'https://amzn.in/d/0cj4pQPk',
-  coverImage: '/src/assets/images/book_cover_civic_sense.svg',
+  coverImage: '/src/assets/images/book_cover_1790795224241.jpg',
   synopsis:
     'A deeply reflective and timely exploration of contemporary Indian society through the lens of civic conscience. While India makes monumental strides in technological leadership, space exploration, and global economic stature, the everyday quality of civic life—from traffic discipline and urban sanitation to queuing patience and respect for public infrastructure—remains an urgent frontier of collective growth. Akash Tiwari combines analytical clarity with authentic on-the-ground observations to ask: How do we align personal pride with public responsibility?',
   keyThemes: [

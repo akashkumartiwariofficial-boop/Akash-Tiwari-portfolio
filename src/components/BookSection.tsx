@@ -108,8 +108,11 @@ export const BookSection: React.FC<BookSectionProps> = ({ onOpenExcerpt }) => {
               <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
                 <div className="aspect-[3/4] relative bg-slate-950 flex items-center justify-center overflow-hidden">
                   <img
-                    src={currentBook.coverImage || '/src/assets/images/book_cover_civic_sense.svg'}
+                    src={currentBook.coverImage || '/src/assets/images/book_cover_1790795224241.jpg'}
                     alt={`Book Cover: ${currentBook.title} by Akash Tiwari`}
+                    onError={(e) => {
+                      e.currentTarget.src = '/src/assets/images/book_cover_1790795224241.jpg';
+                    }}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     referrerPolicy="no-referrer"
                   />

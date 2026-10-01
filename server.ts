@@ -586,24 +586,15 @@ const defaultGalleryPhotos = [
     id: 'photo-1',
     title: 'Executive Navy Suit Formal Portrait',
     category: 'Formal',
-    url: '/src/assets/images/akash_suit_portrait_1790780374642.jpg',
+    url: '/src/assets/images/akash_profile.jpg',
     description: 'Official formal portrait of Akash Kumar Tiwari in classic 3-piece navy suit at IIT Patna.',
     date: '2026',
     location: 'Patna, Bihar, India',
     featured: true,
+    views: 1420,
   },
   {
     id: 'photo-2',
-    title: 'Academic Scholar & Conference Portrait',
-    category: 'Formal',
-    url: '/src/assets/images/akash_tiwari_linkedin_1790780031685.jpg',
-    description: 'LinkedIn & academic research portrait for cybersecurity summits, workshops, and papers.',
-    date: '2026',
-    location: 'Patna, Bihar, India',
-    featured: true,
-  },
-  {
-    id: 'photo-3',
     title: 'IIT Patna Main Campus & Academic Blocks',
     category: 'Campus & IIT Patna',
     url: '/src/assets/images/photo_1790797716011.jpg',
@@ -611,26 +602,73 @@ const defaultGalleryPhotos = [
     date: '2026',
     location: 'Patna, Bihar, India',
     featured: true,
+    views: 980,
+  },
+  {
+    id: 'photo-3',
+    title: 'Academic Scholar & Conference Portrait',
+    category: 'Formal',
+    url: '/src/assets/images/gallery_1790801509360.jpg',
+    description: 'LinkedIn & academic research portrait for cybersecurity summits, workshops, and papers.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: true,
+    views: 850,
   },
   {
     id: 'photo-4',
     title: 'Cybersecurity & CTF Defense Lab',
     category: 'Tech & Research',
-    url: '/src/assets/images/cyber_network_banner_1790761411174.jpg',
+    url: '/src/assets/images/photo_1790797770121.jpg',
     description: 'Deep packet analysis, Kali Linux defensive tooling, and TryHackMe / HackTheBox challenge lab.',
     date: '2026',
     location: 'Patna, Bihar, India',
-    featured: false,
+    featured: true,
+    views: 1120,
   },
   {
     id: 'photo-5',
     title: 'Author Debut: Civic Sense of Indian People',
     category: 'Author & Achievements',
-    url: '/src/assets/images/book_cover_civic_sense_1790761396423.jpg',
+    url: '/src/assets/images/book_cover_1790795224241.jpg',
     description: 'Upcoming 2026 non-fiction book exploring civic responsibility, traffic ethics, and public empathy in India.',
     date: '2026',
     location: 'Patna, Bihar, India',
+    featured: true,
+    views: 1650,
+  },
+  {
+    id: 'photo-6',
+    title: 'Cybersecurity Leadership & Keynote Presentation',
+    category: 'Tech & Research',
+    url: '/src/assets/images/gallery_1790795201085.jpg',
+    description: 'Technical presentation on network security, web application vulnerability assessment, and threat modeling.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
     featured: false,
+    views: 740,
+  },
+  {
+    id: 'photo-7',
+    title: 'LinkedIn Professional Headshot',
+    category: 'Formal',
+    url: '/src/assets/images/akash_tiwari_linkedin_1790780031685.jpg',
+    description: 'Professional profile headshot for computer science research collaborations and engineering outreach.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: false,
+    views: 630,
+  },
+  {
+    id: 'photo-8',
+    title: 'IIT Patna Executive Formal Portrait',
+    category: 'Formal',
+    url: '/src/assets/images/akash_suit_portrait_1790780374642.jpg',
+    description: 'Formal executive portrait taken during academic honours and department leadership events.',
+    date: '2026',
+    location: 'Patna, Bihar, India',
+    featured: false,
+    views: 810,
   },
 ];
 
@@ -644,13 +682,28 @@ if (!fs.existsSync(galleryDataPath)) {
 
 app.get('/api/gallery-photos', (req, res) => {
   try {
-    if (!fs.existsSync(galleryDataPath)) {
-      fs.writeFileSync(galleryDataPath, JSON.stringify(defaultGalleryPhotos, null, 2), 'utf-8');
-      return res.json(defaultGalleryPhotos);
+    let photos = defaultGalleryPhotos;
+    if (fs.existsSync(galleryDataPath)) {
+      try {
+        photos = JSON.parse(fs.readFileSync(galleryDataPath, 'utf-8'));
+      } catch {
+        photos = defaultGalleryPhotos;
+      }
     }
-    const raw = fs.readFileSync(galleryDataPath, 'utf-8');
-    const photos = JSON.parse(raw);
-    return res.json(photos);
+
+    // Automatically filter out any photos whose image files do not exist on disk
+    const validPhotos = photos.filter((p: any) => {
+      if (!p.url) return false;
+      if (p.url.startsWith('data:') || p.url.startsWith('http://') || p.url.startsWith('https://')) {
+        return true;
+      }
+      const relPath = p.url.startsWith('/') ? p.url.slice(1) : p.url;
+      const fullPath = path.join(process.cwd(), relPath);
+      const publicPath = path.join(process.cwd(), 'public', relPath);
+      return fs.existsSync(fullPath) || fs.existsSync(publicPath);
+    });
+
+    return res.json(validPhotos);
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -766,6 +819,33 @@ app.delete('/api/gallery-photos/:id', (req, res) => {
     photos = photos.filter((p: any) => p.id !== id);
     fs.writeFileSync(galleryDataPath, JSON.stringify(photos, null, 2));
     return res.json({ success: true, photos, message: 'Photo deleted successfully.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Increment photo view count
+app.post('/api/gallery-photos/:id/view', (req, res) => {
+  try {
+    const { id } = req.params;
+    let photos: any[] = [];
+    if (fs.existsSync(galleryDataPath)) {
+      try {
+        photos = JSON.parse(fs.readFileSync(galleryDataPath, 'utf-8'));
+      } catch {
+        photos = [...defaultGalleryPhotos];
+      }
+    } else {
+      photos = [...defaultGalleryPhotos];
+    }
+
+    const photo = photos.find((p: any) => p.id === id);
+    if (photo) {
+      photo.views = (photo.views || 0) + 1;
+      fs.writeFileSync(galleryDataPath, JSON.stringify(photos, null, 2), 'utf-8');
+      return res.json({ success: true, views: photo.views, photo });
+    }
+    return res.status(404).json({ error: 'Photo not found' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

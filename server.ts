@@ -1117,10 +1117,165 @@ app.get('/api/portfolio-data', (req, res) => {
   }
 });
 
+const deployConfigPath = path.join(process.cwd(), 'src/data/deploy-config.json');
+
+async function triggerAutoSync(reason: string): Promise<string> {
+  let logs: string[] = [];
+  try {
+    let config = {
+      githubRepo: 'akashkumartiwariofficial-boop/portfolio-app',
+      githubBranch: 'main',
+      githubToken: '',
+      renderDeployHookUrl: '',
+      autoSyncEnabled: true,
+      lastSyncTime: null as string | null,
+      lastSyncStatus: 'Idle',
+      lastSyncLog: '',
+    };
+
+    if (fs.existsSync(deployConfigPath)) {
+      try {
+        config = { ...config, ...JSON.parse(fs.readFileSync(deployConfigPath, 'utf-8')) };
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    logs.push(`[${new Date().toLocaleTimeString()}] Triggered sync: ${reason}`);
+
+    // 1. Render Deploy Hook URL
+    if (config.renderDeployHookUrl) {
+      try {
+        const renderRes = await fetch(config.renderDeployHookUrl, { method: 'POST' });
+        logs.push(`Render Deploy Hook Triggered: ${renderRes.status} ${renderRes.statusText}`);
+      } catch (err: any) {
+        logs.push(`Render Deploy Hook Error: ${err.message}`);
+      }
+    } else {
+      logs.push(`Render Hook: No URL provided. (Add Deploy Hook URL in Admin Portal)`);
+    }
+
+    // 2. GitHub REST API Sync
+    if (config.githubToken && config.githubRepo) {
+      const parts = config.githubRepo.trim().split('/');
+      const owner = parts[0];
+      const repo = parts[1] || parts[0];
+
+      if (owner && repo) {
+        const filesToSync = [
+          'src/data/gallery-data.json',
+          'src/data/custom-portfolio.json',
+          'src/data/deploy-config.json',
+        ];
+
+        for (const relPath of filesToSync) {
+          const fullPath = path.join(process.cwd(), relPath);
+          if (fs.existsSync(fullPath)) {
+            const content = fs.readFileSync(fullPath, 'utf-8');
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${relPath}`;
+
+            let sha: string | undefined;
+            try {
+              const getRes = await fetch(apiUrl, {
+                headers: {
+                  Authorization: `token ${config.githubToken}`,
+                  Accept: 'application/vnd.github.v3+json',
+                },
+              });
+              if (getRes.ok) {
+                const getJson = await getRes.json();
+                sha = getJson.sha;
+              }
+            } catch (e) {
+              // ignore
+            }
+
+            const putRes = await fetch(apiUrl, {
+              method: 'PUT',
+              headers: {
+                Authorization: `token ${config.githubToken}`,
+                Accept: 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                message: `Auto-Sync from Portfolio Admin: ${reason}`,
+                content: Buffer.from(content).toString('base64'),
+                branch: config.githubBranch || 'main',
+                ...(sha ? { sha } : {}),
+              }),
+            });
+
+            if (putRes.ok) {
+              logs.push(`GitHub Sync Success: ${relPath} updated on GitHub!`);
+            } else {
+              const errTxt = await putRes.text();
+              logs.push(`GitHub Sync Note (${relPath}): ${putRes.status} - ${errTxt.slice(0, 100)}`);
+            }
+          }
+        }
+      }
+    } else {
+      logs.push(`GitHub Token: Optional token not set. (Set GitHub PAT Token in Admin Portal to commit directly to GitHub)`);
+    }
+
+    config.lastSyncTime = new Date().toISOString();
+    config.lastSyncStatus = 'Sync Triggered Successfully';
+    config.lastSyncLog = logs.join('\n');
+
+    fs.writeFileSync(deployConfigPath, JSON.stringify(config, null, 2), 'utf-8');
+    return logs.join('\n');
+  } catch (err: any) {
+    return `Sync error: ${err.message}`;
+  }
+}
+
+// Deploy Config API
+app.get('/api/deploy-config', (req, res) => {
+  try {
+    if (fs.existsSync(deployConfigPath)) {
+      const raw = fs.readFileSync(deployConfigPath, 'utf-8');
+      return res.json(JSON.parse(raw));
+    }
+    return res.json({
+      githubRepo: 'akashkumartiwariofficial-boop/portfolio-app',
+      githubBranch: 'main',
+      githubToken: '',
+      renderDeployHookUrl: '',
+      autoSyncEnabled: true,
+      lastSyncTime: null,
+      lastSyncStatus: 'Ready for Deploy',
+      lastSyncLog: 'No sync operations run yet.',
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/deploy-config', (req, res) => {
+  try {
+    const configData = req.body;
+    fs.writeFileSync(deployConfigPath, JSON.stringify(configData, null, 2), 'utf-8');
+    return res.json({ success: true, message: 'Deployment configuration saved.', config: configData });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/sync-github', async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const log = await triggerAutoSync(reason || 'Manual Admin Trigger');
+    return res.json({ success: true, log, message: 'Sync and Render build trigger sent!' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/portfolio-data', (req, res) => {
   try {
     const data = req.body;
     fs.writeFileSync(customPortfolioPath, JSON.stringify(data, null, 2), 'utf-8');
+    triggerAutoSync('Updated Portfolio Info');
     return res.json({ success: true, message: 'Portfolio data updated successfully.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });

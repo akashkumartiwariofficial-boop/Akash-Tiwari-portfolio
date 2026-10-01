@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Terminal, ArrowUpRight, ShieldCheck, Database, Bot } from 'lucide-react';
+import { Menu, X, Terminal, ArrowUpRight, ShieldCheck, Bot } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface NavbarProps {
@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 else window.open('/#admin', '_blank');
               }}
               className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:border-cyan-400 hover:bg-cyan-500/25 transition-all cursor-pointer shadow-sm group-hover:scale-105 active:scale-95"
-              title="Secret Admin Management Portal (Click to Open)"
+              title="Secret Admin Management Portal (Tap to Open)"
             >
               <ShieldCheck className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
             </button>
@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 else window.open('/#admin', '_blank');
               }}
               className="tracking-tight hover:text-cyan-400 transition-colors text-left cursor-pointer flex items-center gap-1.5"
-              title="Secret Admin Management Portal (Click to Open)"
+              title="Secret Admin Management Portal (Tap to Open)"
             >
               <span>{personalInfo.name}</span>
             </button>
@@ -106,17 +106,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Mobile menu trigger */}
           <div className="flex md:hidden items-center gap-2">
-            {onOpenAdmin && (
-              <button
-                onClick={onOpenAdmin}
-                className="p-2 rounded-lg text-slate-300 bg-slate-900 border border-slate-800"
-                aria-label="Open Admin Logs"
-                title="Logs"
-              >
-                <Database className="w-4 h-4 text-cyan-400" />
-              </button>
-            )}
-
             <button
               onClick={onOpenTerminal}
               className="p-2 rounded-lg text-cyan-400 bg-cyan-950/40 border border-cyan-500/30"

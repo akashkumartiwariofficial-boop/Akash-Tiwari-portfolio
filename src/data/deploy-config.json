@@ -1,0 +1,10 @@
+{
+  "githubRepo": "akashkumartiwariofficial-boop/portfolio-app",
+  "githubBranch": "main",
+  "githubToken": "",
+  "renderDeployHookUrl": "",
+  "autoSyncEnabled": true,
+  "lastSyncTime": null,
+  "lastSyncStatus": "Ready for Render & GitHub Auto-Sync",
+  "lastSyncLog": "System initialized. Enter your Render Deploy Hook URL or GitHub Token to enable zero-click auto deployment."
+}

@@ -48,6 +48,8 @@ import {
   FileUp,
   GraduationCap,
   Briefcase,
+  CloudUpload,
+  Zap,
 } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { ProjectItem, CertificationItem, SkillItem, BookItem } from '../types/portfolio';
@@ -115,9 +117,86 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
 
   // Active Management Section - Inquiries & AI Logs & CV/Resume are prioritized
   const [activeTab, setActiveTab] = useState<
-    'inquiries' | 'terminal' | 'cv_resume' | 'media' | 'projects' | 'skills' | 'certifications' | 'personal' | 'photos' | 'book'
+    'inquiries' | 'terminal' | 'cv_resume' | 'deploy_sync' | 'media' | 'projects' | 'skills' | 'certifications' | 'personal' | 'photos' | 'book'
   >('inquiries');
   const [successToast, setSuccessToast] = useState<string | null>(null);
+
+  // Render & GitHub Auto-Sync State
+  const [deployConfig, setDeployConfig] = useState({
+    githubRepo: 'akashkumartiwariofficial-boop/portfolio-app',
+    githubBranch: 'main',
+    githubToken: '',
+    renderDeployHookUrl: '',
+    autoSyncEnabled: true,
+    lastSyncTime: null as string | null,
+    lastSyncStatus: 'Ready for Deploy',
+    lastSyncLog: '',
+  });
+  const [isSyncingDeploy, setIsSyncingDeploy] = useState(false);
+  const [isSavingDeployConfig, setIsSavingDeployConfig] = useState(false);
+  const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/deploy-config')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && typeof data === 'object') {
+          setDeployConfig((prev) => ({ ...prev, ...data }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSaveDeployConfig = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setIsSavingDeployConfig(true);
+    try {
+      const res = await fetch('/api/deploy-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(deployConfig),
+      });
+      if (res.ok) {
+        showToast('Render & GitHub Auto-Sync settings saved successfully!');
+      } else {
+        showToast('Error saving deployment configuration.');
+      }
+    } catch {
+      showToast('Error saving deployment configuration.');
+    } finally {
+      setIsSavingDeployConfig(false);
+    }
+  };
+
+  const handleManualSyncNow = async () => {
+    setIsSyncingDeploy(true);
+    setSyncStatusMsg('Syncing changes to GitHub & triggering Render build...');
+    try {
+      await saveAllChanges();
+      const res = await fetch('/api/sync-github', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'Manual Admin Portal Trigger' }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDeployConfig((prev) => ({
+          ...prev,
+          lastSyncTime: new Date().toISOString(),
+          lastSyncStatus: 'Sync Completed',
+          lastSyncLog: data.log || 'Render build triggered and files pushed to GitHub.',
+        }));
+        showToast('Committed to GitHub & Render deploy build triggered!');
+        setSyncStatusMsg('Success! GitHub received commit and Render build was initiated.');
+      } else {
+        setSyncStatusMsg('Error triggering GitHub/Render sync.');
+      }
+    } catch (err: any) {
+      setSyncStatusMsg(`Sync error: ${err.message}`);
+    } finally {
+      setIsSyncingDeploy(false);
+    }
+  };
 
   // CV & Resume Management State
   const [cvResumeItems, setCvResumeItems] = useState<Array<{
@@ -1758,6 +1837,12 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
               highlight: true,
             },
             {
+              id: 'deploy_sync',
+              label: 'Render & GitHub Auto-Sync',
+              icon: CloudUpload,
+              highlight: true,
+            },
+            {
               id: 'media',
               label: 'Media & Social Channels',
               icon: Share2,
@@ -3133,6 +3218,192 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({ onBackToPortfo
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* ========================================================
+            TAB: RENDER & GITHUB AUTO-SYNC CONTROL CENTER
+        ======================================================== */}
+        {activeTab === 'deploy_sync' && (
+          <div className="space-y-6">
+            {/* Header Banner */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-slate-950 border border-cyan-500/30 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 blur-[120px] pointer-events-none rounded-full" />
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                <div className="space-y-3 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/30 text-xs font-mono text-cyan-300">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Render & GitHub Continuous Deployment Engine</span>
+                  </div>
+
+                  <h2 className="text-2xl sm:text-3xl font-display font-black text-white tracking-tight flex items-center gap-3">
+                    <CloudUpload className="w-8 h-8 text-cyan-400" />
+                    <span>Render + GitHub Auto-Sync System</span>
+                  </h2>
+
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Jab bhi aap Admin Portal me koi photo upload karenge, project add karenge, ya information change karenge, to yeh system aapke badlav ko <strong>GitHub Repository</strong> par auto-commit & push kar dega, jisse <strong>Render</strong> automatically naye changes ke saath website ko live re-deploy kar dega!
+                  </p>
+                </div>
+
+                {/* Quick Deploy Button Card */}
+                <div className="p-5 rounded-2xl bg-slate-950/90 border border-cyan-500/40 text-left shrink-0 space-y-3 min-w-[260px]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-cyan-400 font-semibold">Deployment Status</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Sync Active
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={handleManualSyncNow}
+                    disabled={isSyncingDeploy}
+                    className="w-full px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold font-mono text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/20 active:scale-95 disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isSyncingDeploy ? 'animate-spin' : ''}`} />
+                    <span>{isSyncingDeploy ? 'Syncing & Building...' : 'Push to GitHub & Render Now'}</span>
+                  </button>
+
+                  {deployConfig.lastSyncTime && (
+                    <div className="text-[11px] font-mono text-slate-400 text-center">
+                      Last Sync: {new Date(deployConfig.lastSyncTime).toLocaleTimeString()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {syncStatusMsg && (
+              <div className="p-4 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-200 text-xs font-mono flex items-center gap-2 animate-in fade-in">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span>{syncStatusMsg}</span>
+              </div>
+            )}
+
+            {/* Configuration Form */}
+            <form onSubmit={handleSaveDeployConfig} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Card 1: Render Deploy Hook Settings */}
+              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                <div className="flex items-center gap-2 text-white font-bold text-sm border-b border-slate-800 pb-3">
+                  <Zap className="w-4 h-4 text-cyan-400" />
+                  <span>1. Render Deploy Hook URL (Immediate Auto-Rebuild)</span>
+                </div>
+
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Render me apne service ke Settings -&gt; <strong>Deploy Hook</strong> se URL copy karke yahan paste karein. Isse Admin Portal me save karte hi Render bina wait kiye live build shuru kar dega.
+                </p>
+
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5">
+                    Render Deploy Hook URL
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://api.render.com/deploy/srv-xxxx?key=yyyy"
+                    value={deployConfig.renderDeployHookUrl || ''}
+                    onChange={(e) => setDeployConfig({ ...deployConfig, renderDeployHookUrl: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
+                  />
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] font-mono text-slate-400 space-y-1">
+                  <div className="text-cyan-300 font-bold">How to get Render Deploy Hook URL:</div>
+                  <ol className="list-decimal list-inside space-y-1 text-slate-400">
+                    <li>Go to your Render Dashboard (dashboard.render.com).</li>
+                    <li>Open your Web Service &gt; Settings.</li>
+                    <li>Scroll down to "Deploy Hook" and click "Create Deploy Hook".</li>
+                    <li>Copy the URL and paste it above!</li>
+                  </ol>
+                </div>
+              </div>
+
+              {/* Card 2: GitHub Repository & PAT Token */}
+              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                <div className="flex items-center gap-2 text-white font-bold text-sm border-b border-slate-800 pb-3">
+                  <FolderGit2 className="w-4 h-4 text-cyan-400" />
+                  <span>2. GitHub Repository & Token Sync</span>
+                </div>
+
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Yahan apna GitHub Repository aur Personal Access Token (PAT) dalein taaki photos, gallery JSON, aur portfolio settings sidhe aapke GitHub Repo me commit & push ho sakein.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-mono text-slate-300 block mb-1.5">GitHub Repository</label>
+                    <input
+                      type="text"
+                      placeholder="akashkumartiwariofficial-boop/my-repo"
+                      value={deployConfig.githubRepo || ''}
+                      onChange={(e) => setDeployConfig({ ...deployConfig, githubRepo: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-mono text-slate-300 block mb-1.5">Branch</label>
+                    <input
+                      type="text"
+                      placeholder="main"
+                      value={deployConfig.githubBranch || 'main'}
+                      onChange={(e) => setDeployConfig({ ...deployConfig, githubBranch: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-mono text-slate-300 block mb-1.5">
+                    GitHub Personal Access Token (PAT)
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                    value={deployConfig.githubToken || ''}
+                    onChange={(e) => setDeployConfig({ ...deployConfig, githubToken: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono"
+                  />
+                  <span className="text-[10px] font-mono text-slate-500 mt-1 block">
+                    Create a token on GitHub: Settings &gt; Developer settings &gt; Personal access tokens &gt; Tokens (classic) with 'repo' scope.
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <label className="text-xs font-mono text-slate-300 flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={deployConfig.autoSyncEnabled}
+                      onChange={(e) => setDeployConfig({ ...deployConfig, autoSyncEnabled: e.target.checked })}
+                      className="rounded bg-slate-950 border-slate-800 text-cyan-400 focus:ring-0"
+                    />
+                    <span>Auto-Sync on Every Edit / Photo Upload</span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={isSavingDeployConfig}
+                    className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold font-mono text-xs flex items-center gap-1.5 transition-all shadow-md shadow-cyan-500/20"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>{isSavingDeployConfig ? 'Saving...' : 'Save Settings'}</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Sync Logs Display */}
+            {deployConfig.lastSyncLog && (
+              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                <h4 className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-cyan-400" />
+                  <span>Latest Deployment & GitHub Push Logs</span>
+                </h4>
+                <pre className="p-4 rounded-xl bg-slate-950 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed border border-slate-800/80 max-h-48">
+                  {deployConfig.lastSyncLog}
+                </pre>
+              </div>
+            )}
           </div>
         )}
 

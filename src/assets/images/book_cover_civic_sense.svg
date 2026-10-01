@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 850" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&amp;family=Inter:wght@600;700;800;900&amp;display=swap');
+      .author { font-family: 'Inter', -apple-system, sans-serif; font-size: 27px; font-weight: 800; letter-spacing: 5px; fill: #111418; text-anchor: middle; }
+      .publisher { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; fill: #111418; text-anchor: end; }
+      .title-the { font-family: 'Playfair Display', Georgia, serif; font-size: 46px; font-weight: 700; font-style: italic; fill: #111418; text-anchor: middle; }
+      .title-main { font-family: 'Playfair Display', Georgia, serif; font-size: 64px; font-weight: 900; fill: #111418; text-anchor: middle; letter-spacing: -1px; }
+      .subtitle { font-family: 'Inter', -apple-system, sans-serif; font-size: 21px; font-weight: 800; fill: #111418; text-anchor: middle; letter-spacing: -0.2px; }
+    </style>
+    <!-- Soft shadow for realistic book spine -->
+    <linearGradient id="spineShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35" />
+      <stop offset="3%" stop-color="#000000" stop-opacity="0.1" />
+      <stop offset="6%" stop-color="#000000" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background top half: Ivory Cream -->
+  <rect x="0" y="0" width="600" height="465" fill="#F4EEDF" />
+
+  <!-- Background bottom half: Crimson Red -->
+  <rect x="0" y="465" width="600" height="385" fill="#BF2626" />
+
+  <!-- Publisher branding (top right) -->
+  <g transform="translate(565, 38)">
+    <text x="0" y="0" class="publisher">BOOKSPOT</text>
+    <text x="0" y="13" class="publisher">PUBLISHERS</text>
+  </g>
+
+  <!-- Author Name -->
+  <text x="300" y="98" class="author">AKASH TIWARI</text>
+
+  <!-- Title Section -->
+  <text x="300" y="215" class="title-the">the</text>
+  <text x="300" y="278" class="title-main">civic sense</text>
+  <text x="300" y="348" class="title-main">of Indian</text>
+  <text x="300" y="420" class="title-main">people</text>
+
+  <!-- Perspective Zebra Crosswalk Bars -->
+  <!-- Bar 1 (Topmost, smallest perspective) -->
+  <polygon points="252,476 348,476 352,488 248,488" fill="#F4EEDF" />
+  <!-- Bar 2 -->
+  <polygon points="244,498 356,498 362,513 238,513" fill="#F4EEDF" />
+  <!-- Bar 3 -->
+  <polygon points="232,525 368,525 376,543 224,543" fill="#F4EEDF" />
+  <!-- Bar 4 -->
+  <polygon points="216,557 384,557 394,578 206,578" fill="#F4EEDF" />
+  <!-- Bar 5 -->
+  <polygon points="196,595 404,595 416,620 184,620" fill="#F4EEDF" />
+  <!-- Bar 6 (Bottom-most, widest perspective) -->
+  <polygon points="172,638 428,638 442,668 158,668" fill="#F4EEDF" />
+
+  <!-- Pedestrian Silhouette Crossing -->
+  <g transform="translate(300, 560)">
+    <!-- Head -->
+    <circle cx="5" cy="-45" r="11" fill="#111418" />
+    <!-- Torso -->
+    <path d="M-6,-32 C-2,-34 12,-34 16,-32 L12,-2 C10,2 -1,2 -3,-2 Z" fill="#111418" />
+    <!-- Left Arm -->
+    <path d="M-3,-30 L-18,-14 L-15,-11 L-1,-26 Z" fill="#111418" />
+    <!-- Right Arm -->
+    <path d="M14,-30 L26,-15 L23,-12 L11,-26 Z" fill="#111418" />
+    <!-- Front/Left Stride Leg -->
+    <path d="M-4,-2 L-19,25 L-27,24 L-12,-4 Z" fill="#111418" />
+    <!-- Back/Right Stride Leg -->
+    <path d="M8,-2 L21,24 L27,21 L14,-4 Z" fill="#111418" />
+    <!-- Feet -->
+    <polygon points="-27,23 -17,25 -22,29 -31,27" fill="#111418" />
+    <polygon points="21,23 30,22 34,26 24,28" fill="#111418" />
+  </g>
+
+  <!-- Subtitle -->
+  <text x="300" y="738" class="subtitle">An Honest Look at Our</text>
+  <text x="300" y="768" class="subtitle">Habits and Responsibilities</text>
+
+  <!-- Spine 3D Shadow Overlay -->
+  <rect x="0" y="0" width="600" height="850" fill="url(#spineShadow)" pointer-events="none" />
+</svg>

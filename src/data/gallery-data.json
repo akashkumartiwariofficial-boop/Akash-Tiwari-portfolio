@@ -1,0 +1,52 @@
+[
+  {
+    "id": "photo-1",
+    "title": "Executive Navy Suit Formal Portrait",
+    "category": "Formal",
+    "url": "/src/assets/images/akash_suit_portrait_1790780374642.jpg",
+    "description": "Official formal portrait of Akash Kumar Tiwari in classic 3-piece navy suit at IIT Patna.",
+    "date": "2026",
+    "location": "Patna, Bihar, India",
+    "featured": true
+  },
+  {
+    "id": "photo-2",
+    "title": "Academic Scholar & Conference Portrait",
+    "category": "Formal",
+    "url": "/src/assets/images/akash_tiwari_linkedin_1790780031685.jpg",
+    "description": "LinkedIn & academic research portrait for cybersecurity summits, workshops, and papers.",
+    "date": "2026",
+    "location": "Patna, Bihar, India",
+    "featured": true
+  },
+  {
+    "id": "photo-3",
+    "title": "IIT Patna Main Campus & Academic Blocks",
+    "category": "Campus & IIT Patna",
+    "url": "/src/assets/images/photo_1790797716011.jpg",
+    "description": "Official campus life and academic block view at Indian Institute of Technology Patna (IIT Patna).",
+    "date": "2026",
+    "location": "Patna, Bihar, India",
+    "featured": true
+  },
+  {
+    "id": "photo-4",
+    "title": "Cybersecurity & CTF Defense Lab",
+    "category": "Tech & Research",
+    "url": "/src/assets/images/cyber_network_banner_1790761411174.jpg",
+    "description": "Deep packet analysis, Kali Linux defensive tooling, and TryHackMe / HackTheBox challenge lab.",
+    "date": "2026",
+    "location": "Patna, Bihar, India",
+    "featured": false
+  },
+  {
+    "id": "photo-5",
+    "title": "Author Debut: Civic Sense of Indian People",
+    "category": "Author & Achievements",
+    "url": "/src/assets/images/book_cover_civic_sense_1790761396423.jpg",
+    "description": "Upcoming 2026 non-fiction book exploring civic responsibility, traffic ethics, and public empathy in India.",
+    "date": "2026",
+    "location": "Patna, Bihar, India",
+    "featured": false
+  }
+]
